@@ -19,13 +19,17 @@ class Expense extends Base
   }
 
   // Returns monthly expenses by category
-  public function monthlyExpenses($UserId, $specific_month)
+  public function monthlyExpenses($UserId, $specific_month, $specific_year)
   {
     $stmt = $this->pdo->prepare("SELECT MONTH(Date) as expense_month, Category, SUM(Cost) as total 
-                                FROM expense WHERE UserId = :UserId AND MONTH(Date) = :specific_month 
-                                GROUP BY expense_month, Category");
+                                  FROM expense 
+                                  WHERE UserId = :UserId 
+                                  AND MONTH(Date) = :specific_month 
+                                  AND YEAR(Date) = :specific_year 
+                                  GROUP BY expense_month, Category");
     $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
     $stmt->bindParam(":specific_month", $specific_month, PDO::PARAM_INT);
+    $stmt->bindParam(":specific_year", $specific_year, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_OBJ);
   }

@@ -28,27 +28,59 @@ function bubbleSort(&$data)
         }
     }
 }
+
 // Fetch daily or monthly expenses based on a parameter
 $data = [];
-if (isset($_GET['view'])) {
-    $view = $_GET['view'];
+$view = isset($_GET['view']) ? $_GET['view'] : '';
 
-    if ($view === 'daily') {
-        $specific_date = date('Y-m-d'); // Example: Today
-        $data = $getFromE->dailyExpenses($_SESSION['UserId'], $specific_date);
-    } else if ($view === 'monthly') {
-        $specific_month = date('m'); // Example: Current month
-        $data = $getFromE->monthlyExpenses($_SESSION['UserId'], $specific_month);
-    }
+if ($view === 'daily') {
+    $specific_date = date('Y-m-d'); // Example: Today
+    $data = $getFromE->dailyExpenses($_SESSION['UserId'], $specific_date);
+} else if ($view === 'monthly' && isset($_GET['month']) && isset($_GET['year'])) {
+    $selected_month = $_GET['month'];
+    $selected_year = $_GET['year'];
+    $data = $getFromE->monthlyExpenses($_SESSION['UserId'], $selected_month, $selected_year);
 }
 bubbleSort($data);
 ?>
 
 <div class="wrapper">
     <h2>Expense Visualization</h2>
+
+    <form action="" method="get">
+        <input type="hidden" name="view" value="monthly">
+        <label for="month">Select Month:</label>
+        <select name="month" id="month" required>
+            <?php
+            for ($m = 1; $m <= 12; $m++) {
+                echo "<option value='$m'>" . date('F', mktime(0, 0, 0, $m, 1)) . "</option>";
+            }
+            ?>
+        </select>
+
+        <label for="year">Select Year:</label>
+        <select name="year" id="year" required>
+            <?php
+            $currentYear = date("Y");
+            for ($y = $currentYear - 5; $y <= $currentYear; $y++) {
+                echo "<option value='$y'>$y</option>";
+            }
+            ?>
+        </select>
+
+        <button type="submit">View Monthly Expenses</button>
+    </form>
+
     <div id="visualization"></div>
+
     <script>
         const data = <?php echo json_encode($data); ?>;
+
+        if (data.length > 0) {
+            visualizeExpenses(data);
+        } else {
+            console.log("No expenses found for the selected month.");
+        }
 
         function visualizeExpenses(data) {
             const canvas = document.createElement('canvas');
@@ -72,11 +104,7 @@ bubbleSort($data);
                 ctx.fillText(category, index * barWidth + 10, canvas.height - 5);
             });
         }
-
-        visualizeExpenses(data);
-        var_dump($data);
     </script>
-
     <a href="visual.php?view=daily&rand=<?php echo time(); ?>">View Daily Expenses</a>
     <a href="visual.php?view=monthly&rand=<?php echo time(); ?>">View Monthly Expenses</a>
 
