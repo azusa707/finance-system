@@ -64,13 +64,15 @@ if ($budget_validity == false) {
 // }
 
 // Total Expenses
-$total_expenses = $getFromE->totalexp($_SESSION['UserId']);
-if ($total_expenses == NULL) {
-    $total_expenses = "No Expenses Logged Yet";
-} else {
-    $total_expenses = "$ " . $total_expenses;
-}
-
+// $total_expenses = $getFromE->totalexp($_SESSION['UserId']);
+// if ($total_expenses == NULL) {
+//     $total_expenses = "No Expenses Logged Yet";
+// } else {
+//     $total_expenses = "$ " . $total_expenses;
+// }
+$totalIncome = $getFromI->getTotalIncome($_SESSION['UserId']);
+$totalExpense = $getFromE->getTotalExpense($_SESSION['UserId']);
+$balance = $totalIncome - $totalExpense;
 
 // // Budget Left for the month
 // $budget_left = $getFromB->checkbudget($_SESSION['UserId']);
@@ -163,10 +165,10 @@ if ($total_expenses == NULL) {
                 <div class="counter bg-yell" style="color:white;">
                     <p><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></p>
                     <h3>
-                        Total Expenses
+                        Total Balance
                     </h3>
                     <p style="font-size: 1.2em;">
-                        <?php echo $total_expenses ?>
+                        <?php echo $balance; ?>
                     </p>
                 </div>
             </div>

@@ -99,13 +99,21 @@ bubbleSort($data);
                     .reduce((sum, exp) => sum + parseFloat(exp.total), 0);
             });
 
-            const barWidth = canvas.width / categories.length;
+            const barWidth = canvas.width / categories.length * 0.6;
+            const gap = 30;
             const colors = ['blue', 'green', 'orange', 'red', 'purple'];
-            categories.forEacsh((category, index) => {
+            categories.forEach((category, index) => {
                 ctx.fillStyle = colors[index % colors.length]; // Set color for each category
-                ctx.fillRect(index * barWidth, canvas.height - totals[index], barWidth - 10, totals[index]);
-                ctx.fillStyle = 'black'; // Color for the text
-                ctx.fillText(category, index * barWidth + 10, canvas.height - 5);
+                const barHeight = totals[index];
+                const xPosition = index * (barWidth + gap); // Adjust position with gap between bars
+                const yPosition = canvas.height - barHeight;
+
+                // Draw the bar
+                ctx.fillRect(xPosition, yPosition, barWidth, barHeight);
+
+                // Draw the category label
+                ctx.fillStyle = 'white'; // Color for the text
+                ctx.fillText(category, xPosition + 5, canvas.height - 5)
             });
         }
     </script>

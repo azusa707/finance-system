@@ -138,40 +138,29 @@ $pic = '"' . $pic . '"';
                         <i class="fas fa-calendar-day"></i>
                     </div>
                     <span>
-                        Expense Report
+                        Financial Report
                     </span>
                 </a>
             </li>
-            <li class="sidebar-nav-item" style="display:none;">
-                <a href="7-Datewise.php" class="sidebar-nav-link">
+
+            <li class="sidebar-nav-item">
+                <a href="add-income.php" class="sidebar-nav-link">
                     <div>
-                        <i class="fas fa-calendar-day"></i>
+                        <i class="fas fa-plus-circle"></i>
                     </div>
-                    <span>
-                        Datewise Report
-                    </span>
+                    <span>Add Income</span>
                 </a>
             </li>
-            <li class="sidebar-nav-item" style="display: none;">
-                <a href="8-Monthly.php" class="sidebar-nav-link">
+            <li class="sidebar-nav-item">
+                <a href="manage-income.php" class="sidebar-nav-link">
                     <div>
-                        <i class="fas fa-calendar-week"></i>
+                        <i class="fas fa-edit"></i>
                     </div>
-                    <span>
-                        Monthly Report
-                    </span>
+                    <span>Manage Income</span>
                 </a>
             </li>
-            <li class="sidebar-nav-item" style="display:none;">
-                <a href="9-Yearly.php" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <span>
-                        Yearly Report
-                    </span>
-                </a>
-            </li>
+
+
         </ul>
     </div>
     <!-- end sidebar-->

@@ -20,7 +20,21 @@ if (isset($_POST['delrec'])) {
 				})
 				</script>";
 }
+if (isset($_POST['updaterec'])) {
+	$getFromE->updateExpense($_POST['ID'], $_POST['Category'], $_POST['Cost'], $_POST['Date']);
+	echo "<script>
+            Swal.fire({
+                title: 'Updated!',
+                text: 'Record updated successfully',
+                icon: 'success',
+                confirmButtonText: 'Close'
+            })
+          </script>";
+}
 
+// Predefined categories
+$categories = ['Food', 'Transport', 'Entertainment', 'Education', 'Healthcare', 'Others'];
+?>
 
 ?>
 
@@ -29,11 +43,8 @@ if (isset($_POST['delrec'])) {
 		<div class="col-12">
 			<div class="card">
 				<div class="card-header">
-
 					<i class="fas fa-ellipsis-h"></i>
-					<h3 style="font-family:'Source Sans Pro'; font-size: 1.5em;">
-						Expenses
-					</h3>
+					<h3 style="font-family:'Source Sans Pro'; font-size: 1.5em;">Expenses</h3>
 				</div>
 				<div class="card-content">
 					<table>
@@ -43,7 +54,7 @@ if (isset($_POST['delrec'])) {
 								<th>Category</th>
 								<th>Cost</th>
 								<th>Date</th>
-								<th>Action</th>
+								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -52,14 +63,29 @@ if (isset($_POST['delrec'])) {
 							if ($totexp !== NULL) {
 								$len = count($totexp);
 								for ($x = 1; $x <= $len; $x++) {
+									$expense = $totexp[$x - 1];
 									echo "<tr>
-												<td>" . $x . "</td>
-												 <td>" . htmlspecialchars($totexp[$x - 1]->Category) . "</td>
-												<td>" . "$ " . $totexp[$x - 1]->Cost . "</td>
-												<td>" . date("d-m-Y", strtotime($totexp[$x - 1]->Date)) . "</td>	
-												<td><form style='margin-block-end: 0;' action='' method='post'><input style='display:none;' name='ID' value=" . $totexp[$x - 1]->ID . "></input><button type='submit' name='delrec' class='btn btn-default' style='background:none; color:#8f8f8f; font-size:1em;'>
-												<i class='far fa-trash-alt' style='color:red;'></i></button></form></td>
-											</tr>";
+                                            <form action='' method='post'>
+                                                <td>{$x}</td>
+                                                <td>
+                                                    <select name='Category'>
+                                                        <option disabled>Select a category</option>";
+									foreach ($categories as $category) {
+										// Preselect the current category
+										$selected = ($category == $expense->Category) ? 'selected' : '';
+										echo "<option value='$category' $selected>$category</option>";
+									}
+									echo "              </select>
+                                                </td>
+                                                <td><input type='number' name='Cost' step='0.01' value='{$expense->Cost}' /></td>
+                                                <td><input type='date' name='Date' value='" . date("Y-m-d", strtotime($expense->Date)) . "' /></td>
+                                                <td>
+                                                    <input type='hidden' name='ID' value='{$expense->ID}' />
+                                                    <button type='submit' name='updaterec' class='btn btn-default'>Update</button>
+                                                    <button type='submit' name='delrec' class='btn btn-danger'>Delete</button>
+                                                </td>
+                                            </form>
+                                          </tr>";
 								}
 							}
 							?>

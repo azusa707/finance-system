@@ -5,6 +5,24 @@ class Expense extends Base
   {
     $this->pdo = $pdo;
   }
+  public function allIncome($userId)
+  {
+    $stmt = $this->pdo->prepare("SELECT * FROM Income WHERE UserId = :userId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ); // Fetch all records as objects
+  }
+
+  // Update Expense Function
+  public function updateExpense($id, $category, $cost, $date)
+  {
+    $stmt = $this->pdo->prepare("UPDATE expense SET Category = :Category, Cost = :Cost, Date = :Date WHERE ID = :ID");
+    $stmt->bindParam(":Category", $category, PDO::PARAM_STR);
+    $stmt->bindParam(":Cost", $cost, PDO::PARAM_STR);
+    $stmt->bindParam(":Date", $date, PDO::PARAM_STR);
+    $stmt->bindParam(":ID", $id, PDO::PARAM_INT);
+    $stmt->execute();
+  }
 
   // Returns daily expenses by category
   public function dailyExpenses($UserId, $specific_date)
@@ -75,7 +93,13 @@ class Expense extends Base
       return $total->TOTAL;
   }
 
-
+  public function getTotalExpense($userId)
+  {
+    $stmt = $this->pdo->prepare("SELECT SUM(cost) AS total FROM expense WHERE UserId = :UserId");
+    $stmt->execute(['UserId' => $userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?: 0; // Return 0 if no records found
+  }
   // Expenses of Current Month(Datewise)
   public function Current_month_expenses($UserId)
   {
