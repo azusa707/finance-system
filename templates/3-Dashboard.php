@@ -131,19 +131,7 @@ if ($total_expenses == NULL) {
                     </div>
                 </div>
             </div>
-            <div class="col-4 col-m-4 col-sm-4">
-                <div class="card">
-                    <div class="counter bg-vio" style="color:white;">
-                        <p><i class="fas fa-calendar"></i></p>
-                        <h3>
-                            Last 30 day's Expenses
-                        </h3>
-                        <p style="font-size: 1.2em;">
-                            <?php echo $monthly_expense ?>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            
             <div class="col-4 col-m-4 col-sm-4">
                 <div class="card">
                     <div class="counter bg-success" style="color:white;">
@@ -157,6 +145,19 @@ if ($total_expenses == NULL) {
                     </div>
                 </div>
             </div> -->
+        <div class="col-4 col-m-4 col-sm-4">
+            <div class="card">
+                <div class="counter bg-vio" style="color:white;">
+                    <p><i class="fas fa-calendar"></i></p>
+                    <h3>
+                        Last 30 day's Expenses
+                    </h3>
+                    <p style="font-size: 1.2em;">
+                        <?php echo $monthly_expense ?>
+                    </p>
+                </div>
+            </div>
+        </div>
         <div class="col-4 col-m-4 col-sm-4">
             <div class="card">
                 <div class="counter bg-yell" style="color:white;">

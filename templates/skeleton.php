@@ -91,7 +91,7 @@ $pic = '"' . $pic . '"';
                     </span>
                 </a>
             </li>
-            <li class="sidebar-nav-item">
+            <!-- <li class="sidebar-nav-item">
                 <a href="4-Set-Budget.php" class="sidebar-nav-link">
                     <div>
                         <i class="fas fa-coins"></i>
@@ -101,7 +101,7 @@ $pic = '"' . $pic . '"';
                         Set Budget
                     </span>
                 </a>
-            </li>
+            </li> -->
             <li class="sidebar-nav-item" id="Expense" onclick="open1()">
                 <a href="#" class="sidebar-nav-link">
                     <div>

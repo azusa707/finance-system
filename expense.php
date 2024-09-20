@@ -62,43 +62,39 @@ class Expense extends Base
   //   return $yest->TOTAL;
   // }
 
-  // // Returns total expense amount till date
-  // public function totalexp($UserId) {
-  //   $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS TOTAL FROM expense WHERE UserId = :UserId");
-  //   $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
-  //   $stmt->execute();
-  //   $total = $stmt->fetch(PDO::FETCH_OBJ);
-  //   if($total == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   return $total->TOTAL;
-  // }
+  // Returns total expense amount till date
+  public function totalexp($UserId)
+  {
+    $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS TOTAL FROM expense WHERE UserId = :UserId");
+    $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
+    $stmt->execute();
+    $total = $stmt->fetch(PDO::FETCH_OBJ);
+    if ($total == NULL) {
+      return NULL;
+    } else
+      return $total->TOTAL;
+  }
 
 
-  // // Expenses of Current Month(Datewise)
-  // public function Current_month_expenses($UserId) {
-  //   $stmt = $this->pdo->prepare("SELECT EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS CurrentMonth");
-  //   $stmt->execute();
-  //   $rows1 = $stmt->fetch(PDO::FETCH_OBJ);
-  //   $val = $rows1 -> CurrentMonth;
+  // Expenses of Current Month(Datewise)
+  public function Current_month_expenses($UserId)
+  {
+    $stmt = $this->pdo->prepare("SELECT EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS CurrentMonth");
+    $stmt->execute();
+    $rows1 = $stmt->fetch(PDO::FETCH_OBJ);
+    $val = $rows1->CurrentMonth;
 
-  //   $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS exp1 FROM expense WHERE UserId = :UserId AND MONTH(Date) = :currmon");
-  //   $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
-  //   $stmt->bindParam(":currmon", $val, PDO::PARAM_INT);
-  //   $stmt->execute();
-  //   $rows2 = $stmt->fetch(PDO::FETCH_OBJ);
-  //   if($rows2 == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else 
-  //   {
-  //     return $rows2->exp1;
-  //   }
-
-  // }
+    $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS exp1 FROM expense WHERE UserId = :UserId AND MONTH(Date) = :currmon");
+    $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
+    $stmt->bindParam(":currmon", $val, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows2 = $stmt->fetch(PDO::FETCH_OBJ);
+    if ($rows2 == NULL) {
+      return NULL;
+    } else {
+      return $rows2->exp1;
+    }
+  }
 
   // // Returns expense records between 2 given dates
   // public function dtwise($UserId, $FROM, $TO){

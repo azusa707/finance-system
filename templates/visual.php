@@ -41,35 +41,38 @@ if ($view === 'daily') {
     $selected_year = $_GET['year'];
     $data = $getFromE->monthlyExpenses($_SESSION['UserId'], $selected_month, $selected_year);
 }
+
 bubbleSort($data);
 ?>
 
 <div class="wrapper">
     <h2>Expense Visualization</h2>
 
-    <form action="" method="get">
-        <input type="hidden" name="view" value="monthly">
-        <label for="month">Select Month:</label>
-        <select name="month" id="month" required>
-            <?php
-            for ($m = 1; $m <= 12; $m++) {
-                echo "<option value='$m'>" . date('F', mktime(0, 0, 0, $m, 1)) . "</option>";
-            }
-            ?>
-        </select>
+    <?php if ($view === 'monthly'): ?>
+        <form action="" method="get">
+            <input type="hidden" name="view" value="monthly">
+            <label for="month">Select Month:</label>
+            <select name="month" id="month" required>
+                <?php
+                for ($m = 1; $m <= 12; $m++) {
+                    echo "<option value='$m'>" . date('F', mktime(0, 0, 0, $m, 1)) . "</option>";
+                }
+                ?>
+            </select>
 
-        <label for="year">Select Year:</label>
-        <select name="year" id="year" required>
-            <?php
-            $currentYear = date("Y");
-            for ($y = $currentYear - 5; $y <= $currentYear; $y++) {
-                echo "<option value='$y'>$y</option>";
-            }
-            ?>
-        </select>
+            <label for="year">Select Year:</label>
+            <select name="year" id="year" required>
+                <?php
+                $currentYear = date("Y");
+                for ($y = $currentYear - 5; $y <= $currentYear; $y++) {
+                    echo "<option value='$y'>$y</option>";
+                }
+                ?>
+            </select>
 
-        <button type="submit">View Monthly Expenses</button>
-    </form>
+            <button type="submit">View Monthly Expenses</button>
+        </form>
+    <?php endif; ?>
 
     <div id="visualization"></div>
 
@@ -97,15 +100,16 @@ bubbleSort($data);
             });
 
             const barWidth = canvas.width / categories.length;
-            categories.forEach((category, index) => {
-                ctx.fillStyle = 'blue'; // Color for the bars
+            const colors = ['blue', 'green', 'orange', 'red', 'purple'];
+            categories.forEacsh((category, index) => {
+                ctx.fillStyle = colors[index % colors.length]; // Set color for each category
                 ctx.fillRect(index * barWidth, canvas.height - totals[index], barWidth - 10, totals[index]);
-                ctx.fillStyle = 'black';
+                ctx.fillStyle = 'black'; // Color for the text
                 ctx.fillText(category, index * barWidth + 10, canvas.height - 5);
             });
         }
     </script>
+
     <a href="visual.php?view=daily&rand=<?php echo time(); ?>">View Daily Expenses</a>
     <a href="visual.php?view=monthly&rand=<?php echo time(); ?>">View Monthly Expenses</a>
-
 </div>
