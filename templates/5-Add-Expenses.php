@@ -60,8 +60,7 @@ if (isset($_POST['addexpense'])) {
 						</div>
 					</form>
 				</div>
-				<a href="visual.php?view=daily"> View Daily Expenses < /a>
-						<a href="visual.php?view=monthly"> View Monthly Expenses < /a>
+
 			</div>
 		</div>
 	</div>

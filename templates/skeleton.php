@@ -43,7 +43,7 @@ $pic = '"' . $pic . '"';
         </ul>
 
         <!-- end nav left  -->
-        <h1 class="navbar-text">Expense Management System</h1>
+        <h1 class="navbar-text">Personal Finance Management System</h1>
         <!-- nav right  -->
         <ul class="navbar-nav nav-right">
             <!-- <li class="nav-item">
@@ -86,81 +86,79 @@ $pic = '"' . $pic . '"';
                     <div>
                         <i class="fas fa-tachometer-alt"></i>
                     </div>
-                    <span>
-                        Dashboard
-                    </span>
+                    <span>Dashboard</span>
                 </a>
             </li>
-            <!-- <li class="sidebar-nav-item">
-                <a href="4-Set-Budget.php" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-coins"></i>
-                    </div>
-
-                    <span>
-                        Set Budget
-                    </span>
-                </a>
-            </li> -->
-            <li class="sidebar-nav-item" id="Expense" onclick="open1()">
+            <li class="sidebar-nav-item" id="Expense" onclick="toggleDropdown('expenseDropdown')">
                 <a href="#" class="sidebar-nav-link">
                     <div>
                         <i class="fa fa-plus-circle"></i>
                     </div>
-                    <span>
-                        Expenses
-                    </span>
+                    <span>Expenses</span>
                 </a>
+                <ul id="expenseDropdown" class="dropdown-content" style="display: none;">
+                    <li class="sidebar-nav-item">
+                        <a href="5-Add-Expenses.php" class="sidebar-nav-link">
+                            <div>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <span>Add Expenses</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="6-Manage-Expenses.php" class="sidebar-nav-link">
+                            <div>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <span>Manage Expenses</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="sidebar-nav-item" style="display: none;">
-                <a href="5-Add-Expenses.php" class="sidebar-nav-link">
+            <li class="sidebar-nav-item" id="Income" onclick="toggleDropdown('incomeDropdown')">
+                <a href="#" class="sidebar-nav-link">
                     <div>
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        <i class="fa fa-plus-circle"></i>
                     </div>
-                    <span>
-                        Add Expenses
-                    </span>
+                    <span>Income</span>
                 </a>
+                <ul id="incomeDropdown" class="dropdown-content" style="display: none;">
+                    <li class="sidebar-nav-item">
+                        <a href="add-income.php" class="sidebar-nav-link">
+                            <div>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <span>Add Income</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a href="manage-income.php" class="sidebar-nav-link">
+                            <div>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <span>Manage Income</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-            <li class="sidebar-nav-item" style="display: none">
-                <a href="6-Manage-Expense.php" class="sidebar-nav-link" style="display: none">
-                    <div>
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                    <span>
-                        Manage Expenses
-                    </span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item" id="ER" onclick="open2()">
+            <li class="sidebar-nav-item" id="ER" onclick="toggleDropdown('reportDropdown')">
                 <a href="#" class="sidebar-nav-link">
                     <div>
                         <i class="fas fa-calendar-day"></i>
                     </div>
-                    <span>
-                        Financial Report
-                    </span>
+                    <span>Financial Report</span>
                 </a>
+                <ul id="reportDropdown" class="dropdown-content" style="display: none;">
+                    <li class="sidebar-nav-item">
+                        <a href="visual.php" class="sidebar-nav-link">
+                            <div>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <span>expense Report</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
-
-            <li class="sidebar-nav-item">
-                <a href="add-income.php" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-plus-circle"></i>
-                    </div>
-                    <span>Add Income</span>
-                </a>
-            </li>
-            <li class="sidebar-nav-item">
-                <a href="manage-income.php" class="sidebar-nav-link">
-                    <div>
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <span>Manage Income</span>
-                </a>
-            </li>
-
-
         </ul>
     </div>
     <!-- end sidebar-->

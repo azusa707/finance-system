@@ -83,139 +83,101 @@ function openCloseDropdown(event){
 
 
 
-function open1() {
-    let val = document.getElementById('Expense');
-    let sib1 = val.nextElementSibling;
-    let sib2 = sib1.nextElementSibling;
-    if(val.classList.length === 1)
-    {
-        val.classList.add("open");
-        console.log(val.classList);
-        sib1.outerHTML = `<li class="sidebar-nav-item">
-                            <a href="5-Add-Expenses.php" class="sidebar-nav-link">
-                                <div>
-                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                </div>
-                                <span>
-                                    Add Expenses
-                                </span>
-                            </a>
-                        </li>`
-        sib2.outerHTML = `<li class="sidebar-nav-item">
-                                <a href="6-Manage-Expenses.php" class="sidebar-nav-link">
-                                    <div>
-                                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Manage Expenses
-                                    </span>
-                                </a>
-                            </li>`
-    }
-    else
-    {
-        val.classList.remove("open");
-        sib1.outerHTML = `<li class="sidebar-nav-item" style="display: none">
-                                <a href="5-Add-Expenses.php" class="sidebar-nav-link">
-                                <div>
-                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                </div>
-                                <span>
-                                    Add Expenses
-                                </span>
-                                </a>
-                            </li>`
-        sib2.outerHTML = `<li class="sidebar-nav-item">
-                                <a href="6-Manage-Expenses.php" class="sidebar-nav-link" style="display: none">
-                                <div>
-                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                </div>
-                                <span>
-                                    Manage Expenses
-                                </span>
-                                </a>
-                            </li>`
-    }
+// function open1() {
+//     let val = document.getElementById('Expense');
+//     let sib1 = val.nextElementSibling;
+//     let sib2 = sib1.nextElementSibling;
+//     if(val.classList.length === 1)
+//     {
+//         val.classList.add("open");
+//         console.log(val.classList);
+//         sib1.outerHTML = `<li class="sidebar-nav-item">
+//                             <a href="5-Add-Expenses.php" class="sidebar-nav-link">
+//                                 <div>
+//                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                 </div>
+//                                 <span>
+//                                     Add Expenses
+//                                 </span>
+//                             </a>
+//                         </li>`
+//         sib2.outerHTML = `<li class="sidebar-nav-item">
+//                                 <a href="6-Manage-Expenses.php" class="sidebar-nav-link">
+//                                     <div>
+//                                     <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                     </div>
+//                                     <span>
+//                                         Manage Expenses
+//                                     </span>
+//                                 </a>
+//                             </li>`
+//     }
+//     else
+//     {
+//         val.classList.remove("open");
+//         sib1.outerHTML = `<li class="sidebar-nav-item" style="display: none">
+//                                 <a href="5-Add-Expenses.php" class="sidebar-nav-link">
+//                                 <div>
+//                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                 </div>
+//                                 <span>
+//                                     Add Expenses
+//                                 </span>
+//                                 </a>
+//                             </li>`
+//         sib2.outerHTML = `<li class="sidebar-nav-item">
+//                                 <a href="6-Manage-Expenses.php" class="sidebar-nav-link" style="display: none">
+//                                 <div>
+//                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                 </div>
+//                                 <span>
+//                                     Manage Expenses
+//                                 </span>
+//                                 </a>
+//                             </li>`
+//     }
 
+// }
+function toggleDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (dropdown.style.display === "none" || dropdown.style.display === "") {
+        dropdown.style.display = "block";
+    } else {
+        dropdown.style.display = "none";
+    }
 }
 
-function open2() {
-    let val = document.getElementById('ER');
-    let sib1 = val.nextElementSibling;
-    let sib2 = sib1.nextElementSibling;
-    let sib3 = sib2.nextElementSibling;
-    if(val.classList.length === 1)
-    {
-        val.classList.add("open");
-        console.log(val.classList);
+// function open2() {
+//     let val = document.getElementById('ER');
+//     let sib1 = val.nextElementSibling;
 
-        sib1.outerHTML = `<li class="sidebar-nav-item">
-                                <a href="7-Datewise.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Datewise Report
-                                    </span>
-                                </a>
-                            </li>`
-        sib2.outerHTML = `<li class="sidebar-nav-item">
-                                <a href="8-Monthly.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Monthly Report
-                                    </span>
-                                </a>
-                            </li>`
-        
-        sib3.outerHTML = `<li class="sidebar-nav-item">
-                                <a href="9-Yearly.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Yearly Report
-                                    </span>
-                                </a>
-                            </li>`
-    }
-    else
-    {
-        val.classList.remove("open");
-        sib1.outerHTML = `<li class="sidebar-nav-item" style="display:none;">
-                                <a href="7-Datewise.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Datewise Report
-                                    </span>
-                                </a>
-                            </li>`
-        sib2.outerHTML = `<li class="sidebar-nav-item" style="display: none;">
-                                <a href="8-Monthly.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Monthly Report
-                                    </span>
-                                </a>
-                            </li>`
+//     if (val.classList.length === 1) {
+//         val.classList.add("open");
 
-        sib3.outerHTML = `<li class="sidebar-nav-item" style="display:none;">
-                                <a href="9-Yearly.php" class="sidebar-nav-link">
-                                    <div>
-                                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                                    </div>
-                                    <span>
-                                        Yearly Report
-                                    </span>
-                                </a>
-                            </li>`
-    }
-
-}
+//         // Show Financial Report link only
+//         sib1.outerHTML = `<li class="sidebar-nav-item">
+//                                 <a href="7-Financial-Report.php" class="sidebar-nav-link">
+//                                     <div>
+//                                         <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                     </div>
+//                                     <span>
+//                                         Financial Report
+//                                     </span>
+//                                 </a>
+//                             </li>`;
+//     } else {
+//         val.classList.remove("open");
+//         // Hide Financial Report link
+//         sib1.outerHTML = `<li class="sidebar-nav-item" style="display:none;">
+//                                 <a href="7-Financial-Report.php" class="sidebar-nav-link">
+//                                     <div>
+//                                         <i class="fas fa-arrow-right" aria-hidden="true"></i>
+//                                     </div>
+//                                     <span>
+//                                         Financial Report
+//                                     </span>
+//                                 </a>
+//                             </li>`;
+//     }
+// }
 
