@@ -12,7 +12,10 @@ if (isset($_SESSION['swal'])) {
     echo $_SESSION['swal'];
     unset($_SESSION['swal']);
 }
-
+$monthly_income = $getFromI->monthlyIncome($_SESSION['UserId'], $current_month, $current_year);
+$monthly_expense = $getFromE->monthlyExpenses($_SESSION['UserId'], $current_month, $current_year);
+$current_month = date('m');
+$current_year = date('Y');
 // Budget validity checker 
 $budget_validity = $getFromB->budget_validity_checker($_SESSION['UserId']);
 if ($budget_validity == false) {
@@ -52,16 +55,18 @@ if ($budget_validity == false) {
 //     $week_expense = "$ ".$week_expense;
 // }
 
-// // Last 30 Days' Expenses
-// $monthly_expense = $getFromE->Expenses($_SESSION['UserId'],29);
-// if($monthly_expense == NULL)
-// {
-//     $monthly_expense = "No Expenses This Month";
-// }
-// else
-// {
-//     $monthly_expense = "$ ".$monthly_expense;
-// }
+// Last 30 Days' Expenses
+
+if ($monthly_expense == NULL) {
+    $monthly_expense = "No Expenses This Month";
+} else {
+    $monthly_expense = "$ " . $monthly_expense;
+}
+if ($monthly_income == NULL) {
+    $monthly_income = "No Income This Month";
+} else {
+    $monthly_income =   "$" . $monthly_income;
+}
 
 // Total Expenses
 // $total_expenses = $getFromE->totalexp($_SESSION['UserId']);

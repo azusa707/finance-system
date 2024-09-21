@@ -14,4 +14,4 @@ $getFromB = new Budget($pdo);
 $getFromE = new Expense($pdo);
 $getFromI = new Income($pdo);
 
-define("BASE_URL", "http://localhost/ExpenseManagement-PHP/");
+define("BASE_URL", "http://localhost/finance/");

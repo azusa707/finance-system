@@ -36,7 +36,19 @@ class Income extends Base
         $stmt = $this->pdo->prepare("DELETE FROM income WHERE id = ?");
         return $stmt->execute([$id]);
     }
-
+    public function monthlyIncome($UserId, $specific_month, $specific_year)
+    {
+        $stmt = $this->pdo->prepare("SELECT SUM(Amount) as total_income 
+                                      FROM income 
+                                      WHERE UserId = :UserId 
+                                      AND MONTH(Date) = :specific_month 
+                                      AND YEAR(Date) = :specific_year");
+        $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
+        $stmt->bindParam(":specific_month", $specific_month, PDO::PARAM_INT);
+        $stmt->bindParam(":specific_year", $specific_year, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ)->total_income;
+    }
     public function getTotalIncome($userId)
     {
         $stmt = $this->pdo->prepare("SELECT SUM(amount) AS total FROM income WHERE Userid = :UserId");

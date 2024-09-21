@@ -23,7 +23,7 @@ $pic = '"' . $pic . '"';
     <script src="../static/js/yearpicker.js" async></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
-    <title>Expense Management</title>
+    <title>Personal Finance Management</title>
 
 </head>
 
