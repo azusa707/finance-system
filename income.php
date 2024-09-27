@@ -38,16 +38,16 @@ class Income extends Base
     }
     public function monthlyIncome($UserId, $specific_month, $specific_year)
     {
-        $stmt = $this->pdo->prepare("SELECT SUM(Amount) as total_income 
-                                      FROM income 
-                                      WHERE UserId = :UserId 
-                                      AND MONTH(Date) = :specific_month 
-                                      AND YEAR(Date) = :specific_year");
+        $stmt = $this->pdo->prepare("SELECT SUM(Amount) as total
+                                 FROM income 
+                                 WHERE UserId = :UserId 
+                                 AND MONTH(Date) = :specific_month 
+                                 AND YEAR(Date) = :specific_year");
         $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
         $stmt->bindParam(":specific_month", $specific_month, PDO::PARAM_INT);
         $stmt->bindParam(":specific_year", $specific_year, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_OBJ)->total_income;
+        return $stmt->fetch(PDO::FETCH_OBJ);  // Make sure it returns a single result
     }
     public function getTotalIncome($userId)
     {

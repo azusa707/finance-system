@@ -7,176 +7,78 @@ if ($getFromU->loggedIn() === false) {
 }
 
 include_once 'skeleton.php';
-
+$current_month = date('m');  // Get the current month in numerical format (e.g., 09 for September)
+$current_year = date('Y');
 if (isset($_SESSION['swal'])) {
     echo $_SESSION['swal'];
     unset($_SESSION['swal']);
 }
 $monthly_income = $getFromI->monthlyIncome($_SESSION['UserId'], $current_month, $current_year);
 $monthly_expense = $getFromE->monthlyExpenses($_SESSION['UserId'], $current_month, $current_year);
-$current_month = date('m');
-$current_year = date('Y');
-// Budget validity checker 
-$budget_validity = $getFromB->budget_validity_checker($_SESSION['UserId']);
-if ($budget_validity == false) {
-    $getFromB->del_budget_record($_SESSION['UserId']);
-}
 
-// // Today's Expenses
-// $today_expense = $getFromE->Expenses($_SESSION['UserId'],0);
-// if($today_expense == NULL)
-// {
-//     $today_expense = "No Expenses Logged Today";
-// }
-// else
-// {
-//     $today_expense = "$ ".$today_expense;
-// }
 
-// // Yesterday's Expenses
-// $Yesterday_expense = $getFromE->Yesterday_expenses($_SESSION['UserId']);
-// if($Yesterday_expense == NULL)
-// {
-//     $Yesterday_expense = "No Expenses Logged Yesterday";
-// }
-// else
-// {
-//     $Yesterday_expense = "$ ".$Yesterday_expense;
-// }
 
-// // Last 7 Days' Expenses 
-// $week_expense = $getFromE->Expenses($_SESSION['UserId'],6);
-// if($week_expense == NULL)
-// {
-//     $week_expense = "No Expenses Logged This Week";
-// }
-// else
-// {
-//     $week_expense = "$ ".$week_expense;
-// }
 
 // Last 30 Days' Expenses
 
 if ($monthly_expense == NULL) {
-    $monthly_expense = "No Expenses This Month";
+    $monthly_expense_display = "No Expenses This Month";
 } else {
-    $monthly_expense = "$ " . $monthly_expense;
+    $monthly_expense_display = "$ " . $monthly_expense->total;
 }
+// Last 30 Days' Income
 if ($monthly_income == NULL) {
-    $monthly_income = "No Income This Month";
+    $monthly_income_display = "No Income This Month";
 } else {
-    $monthly_income =   "$" . $monthly_income;
+    $monthly_income_display = " " . $monthly_income->total;
 }
 
-// Total Expenses
-// $total_expenses = $getFromE->totalexp($_SESSION['UserId']);
-// if ($total_expenses == NULL) {
-//     $total_expenses = "No Expenses Logged Yet";
-// } else {
-//     $total_expenses = "$ " . $total_expenses;
-// }
+
 $totalIncome = $getFromI->getTotalIncome($_SESSION['UserId']);
 $totalExpense = $getFromE->getTotalExpense($_SESSION['UserId']);
 $balance = $totalIncome - $totalExpense;
 
-// // Budget Left for the month
-// $budget_left = $getFromB->checkbudget($_SESSION['UserId']);
-// if($budget_left == NULL)
-// {
-//     $budget_left = "Not Set Yet";
-// }
-// else
-// {
-//     $currmonexp = $getFromE->Current_month_expenses($_SESSION['UserId']);
-//     if($currmonexp==NULL)
-//     {
-//         $currmonexp = 0;
-//     }
-//     $budget_left = $budget_left - $currmonexp;
-//     $budget_left = "$ ".$budget_left;
-// }
+
 
 ?>
 <div class="wrapper">
     <div class="row">
+
         <!-- <div class="col-4 col-m-4 col-sm-4">
-                <div class="card">
-                    <div class="counter bg-danger" style="color:white;">
-                        <p><i class="fas fa-tasks"></i></p>
-                        <h3>
-                            Today's Expenses
-                        </h3>
-                        <p style="font-size: 1.2em;">
-                            <?php echo $today_expense ?>
-                        </p>
-                    </div>
+            <div class="card">
+                <div class="counter bg-vio" style="color:white;">
+                    <p><i class="fas fa-calendar"></i></p>
+                    <h3>Last 30 day's Expenses</h3>
+                    <p style="font-size: 1.2em;">
+                        <?php echo $monthly_expense_display; ?>
+                    </p>
                 </div>
             </div>
-            <div class="col-4 col-m-4 col-sm-4">
-                <div class="card">
-                    <div class="counter bg-primary" style="color:white;">
-                        <p><i class="fas fa-undo-alt"></i></p>
-                        <h3>
-                            Yesterday's Expenses
-                        </h3>
-                        <p style="font-size: 1.2em;">
-                            <?php echo $Yesterday_expense ?>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4 col-m-4 col-sm-4">
-                <div class="card">
-                    <div class="counter bg-warning" style="color:white;">
-                        <p><i class="fas fa-calendar-week"></i></p>
-                        <h3>
-                            Last 7 day's Expenses
-                        </h3>
-                        <p style="font-size: 1.2em;">
-                            <?php echo $week_expense ?>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-4 col-m-4 col-sm-4">
-                <div class="card">
-                    <div class="counter bg-success" style="color:white;">
-                        <p><i class="fas fa-dollar-sign"></i></p>
-                        <h3>
-                            Monthly Budget Left
-                        </h3>
-                        <p style="font-size: 1.2em;">
-                            <?php echo $budget_left ?>
-                        </p>
-                    </div>
-                </div>
-            </div> -->
+        </div> -->
+
         <div class="col-4 col-m-4 col-sm-4">
             <div class="card">
                 <div class="counter bg-vio" style="color:white;">
                     <p><i class="fas fa-calendar"></i></p>
-                    <h3>
-                        Last 30 day's Expenses
-                    </h3>
+                    <h3>Last 30 day's Income</h3>
                     <p style="font-size: 1.2em;">
-                        <?php echo $monthly_expense ?>
+                        <?php echo $monthly_income_display; ?>
                     </p>
                 </div>
             </div>
         </div>
+
         <div class="col-4 col-m-4 col-sm-4">
             <div class="card">
                 <div class="counter bg-yell" style="color:white;">
                     <p><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i></p>
-                    <h3>
-                        Total Balance
-                    </h3>
+                    <h3>Total Balance</h3>
                     <p style="font-size: 1.2em;">
-                        <?php echo $balance; ?>
+                        <?php echo " " . ($totalIncome - $totalExpense); ?>
                     </p>
                 </div>
             </div>
         </div>
+
     </div>
 </div>

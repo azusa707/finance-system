@@ -141,6 +141,7 @@ $pic = '"' . $pic . '"';
                     </li>
                 </ul>
             </li>
+            <li><a href="expense_forecast.php"><i class="fas fa-chart-line"></i> Expense Forecast</a></li>
             <li class="sidebar-nav-item" id="ER" onclick="toggleDropdown('reportDropdown')">
                 <a href="#" class="sidebar-nav-link">
                     <div>
@@ -154,7 +155,7 @@ $pic = '"' . $pic . '"';
                             <div>
                                 <i class="fas fa-arrow-right"></i>
                             </div>
-                            <span>expense Report</span>
+                            <span>Expense Report</span>
                         </a>
                     </li>
                 </ul>

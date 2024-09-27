@@ -10,25 +10,26 @@ if ($getFromU->loggedIn() === false) {
     header('Location: ../index.php');
 }
 
-// Include skeleton if necessary (optional)
+
 include_once 'skeleton.php';
 
 // Bubble Sort Function
 function bubbleSort(&$data)
 {
-    $n = count($data);
-    for ($i = 0; $i < $n - 1; $i++) {
-        for ($j = 0; $j < $n - $i - 1; $j++) {
-            if ($data[$j]->total < $data[$j + 1]->total) { // Sort by total descending
-                // Swap
-                $temp = $data[$j];
-                $data[$j] = $data[$j + 1];
-                $data[$j + 1] = $temp;
+    if (is_array($data)) {
+        $n = count($data);
+        for ($i = 0; $i < $n - 1; $i++) {
+            for ($j = 0; $j < $n - $i - 1; $j++) {
+                if ($data[$j]->total < $data[$j + 1]->total) { // Sort by total descending
+                    // Swap
+                    $temp = $data[$j];
+                    $data[$j] = $data[$j + 1];
+                    $data[$j + 1] = $temp;
+                }
             }
         }
     }
 }
-
 // Fetch daily or monthly expenses based on a parameter
 $data = [];
 $view = isset($_GET['view']) ? $_GET['view'] : '';

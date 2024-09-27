@@ -24,6 +24,90 @@ class Expense extends Base
     $stmt->execute();
   }
 
+  public function forecastExpenses($userId, $periodsToForecast = 3)
+  {
+    // Fetch the last 12 months of expenses
+    $stmt = $this->pdo->prepare("
+          SELECT YEAR(Date) as year, MONTH(Date) as month, SUM(Cost) as total
+          FROM expense 
+          WHERE UserId = :userId 
+          AND Date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+          GROUP BY YEAR(Date), MONTH(Date)
+          ORDER BY YEAR(Date), MONTH(Date)
+      ");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Extract just the expense values
+    $expenseValues = array_column($expenses, 'total');
+
+    // Calculate moving average
+    $movingAveragePeriods = 3;
+    $movingAverages = $this->calculateMovingAverage($expenseValues, $movingAveragePeriods);
+
+    // Calculate the average change in moving averages
+    $changes = [];
+    for ($i = 1; $i < count($movingAverages); $i++) {
+      $changes[] = $movingAverages[$i] - $movingAverages[$i - 1];
+    }
+    $avgChange = array_sum($changes) / count($changes);
+
+    // Forecast future expenses
+    $forecast = [];
+    $lastMA = end($movingAverages);
+    for ($i = 0; $i < $periodsToForecast; $i++) {
+      $forecast[] = $lastMA + ($avgChange * ($i + 1));
+    }
+
+    return $forecast;
+  }
+
+  private function calculateMovingAverage($expenses, $periods)
+  {
+    $movingAverages = [];
+    $total = array_sum(array_slice($expenses, 0, $periods));
+    $movingAverages[] = $total / $periods;
+
+    for ($i = $periods; $i < count($expenses); $i++) {
+      $total = $total - $expenses[$i - $periods] + $expenses[$i];
+      $movingAverages[] = $total / $periods;
+    }
+
+    return $movingAverages;
+  }
+
+  public function getLastTwelveMonthsExpenses($userId)
+  {
+    $stmt = $this->pdo->prepare("
+          SELECT YEAR(Date) as year, MONTH(Date) as month, SUM(Cost) as total
+          FROM expense 
+          WHERE UserId = :userId 
+          AND Date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+          GROUP BY YEAR(Date), MONTH(Date)
+          ORDER BY YEAR(Date), MONTH(Date)
+      ");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  // Fetch monthly expense data for the last few months
+  public function getLastThreeMonthsExpenses($userId)
+  {
+    // Fetch the last 3 months' expenses
+    $stmt = $this->pdo->prepare("
+        SELECT MONTH(Date) as expense_month, SUM(Cost) as total
+        FROM expense 
+        WHERE UserId = :UserId 
+        AND Date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH) 
+        GROUP BY expense_month
+        ORDER BY expense_month
+    ");
+    $stmt->bindParam(":UserId", $userId, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+  }
   // Returns daily expenses by category
   public function dailyExpenses($UserId, $specific_date)
   {
@@ -51,34 +135,6 @@ class Expense extends Base
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_OBJ);
   }
-  // // Returns total expense amount within n days from now
-  // public function Expenses($UserId, $n) {
-  //   $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS TOTAL FROM expense WHERE UserId = :UserId AND DATE(`Date`) >= CURDATE() - INTERVAL :n DAY");
-  //   $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
-  //   $stmt->bindParam(":n", $n, PDO::PARAM_INT);
-  //   $stmt->execute();
-  //   $today = $stmt->fetch(PDO::FETCH_OBJ);
-  //   if($today == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   return $today->TOTAL;
-  //   }
-
-  // // Returns yesterday's expense amount
-  // public function Yesterday_expenses($UserId) {
-  //   $stmt = $this->pdo->prepare("SELECT SUM(Cost) AS TOTAL FROM expense WHERE UserId = :UserId AND DATE(`Date`) = CURDATE() - INTERVAL 1 DAY");
-  //   $stmt->bindParam(":UserId", $UserId, PDO::PARAM_INT);
-  //   $stmt->execute();
-  //   $yest = $stmt->fetch(PDO::FETCH_OBJ);
-  //   if($yest == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   return $yest->TOTAL;
-  // }
 
   // Returns total expense amount till date
   public function totalexp($UserId)
@@ -120,59 +176,9 @@ class Expense extends Base
     }
   }
 
-  // // Returns expense records between 2 given dates
-  // public function dtwise($UserId, $FROM, $TO){
-  //   $stmt = $this->pdo->prepare("SELECT * FROM expense WHERE (Date >= :fromdate AND Date <= (:todate + INTERVAL 1 DAY)) AND UserId = :user ORDER BY Date");
-  //   $stmt->bindParam(":user", $UserId, PDO::PARAM_INT);
-  //   $stmt->bindParam(":fromdate", $FROM, PDO::PARAM_STR); 
-  //   $stmt->bindParam(":todate", $TO, PDO::PARAM_STR);
-  //   $stmt->execute();
-  //   $dt = $stmt->fetchAll(PDO::FETCH_OBJ);
-  //   if($dt == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   {
-  //     return $dt;
-  //   }
-  // }
 
-  // // Returns expense records between any two given months
-  // public function mthwise($UserId, $FROM, $TO){
-  //   $stmt = $this->pdo->prepare("SELECT * FROM expense WHERE (Date >= :fromdate AND Date <= (:todate + INTERVAL 1 MONTH)) AND UserId = :user ORDER BY Date ");
-  //   $stmt->bindParam(":user", $UserId, PDO::PARAM_INT);
-  //   $stmt->bindParam(":fromdate", $FROM, PDO::PARAM_STR); 
-  //   $stmt->bindParam(":todate", $TO, PDO::PARAM_STR);
-  //   $stmt->execute();
-  //   $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
-  //   if($rows == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   {
-  //     return $rows;
-  //   }
-  // }
 
-  // // Returns expense records(rows) between any two given years
-  // public function yrwise($UserId, $FROM, $TO){
-  //   $stmt = $this->pdo->prepare("SELECT * FROM expense WHERE (EXTRACT(year FROM Date) >= :fromdate AND EXTRACT(year FROM Date) <= (:todate)) AND UserId = :user ORDER BY Date");
-  //   $stmt->bindParam(":user", $UserId, PDO::PARAM_INT);
-  //   $stmt->bindParam(":fromdate", $FROM, PDO::PARAM_STR); 
-  //   $stmt->bindParam(":todate", $TO, PDO::PARAM_STR);
-  //   $stmt->execute();
-  //   $dt = $stmt->fetchAll(PDO::FETCH_OBJ);
-  //   if($dt == NULL)
-  //   {
-  //     return NULL;
-  //   }
-  //   else
-  //   {
-  //     return $dt;
-  //   }
-  // }
+
 
   // Returns all rows from expense table
   public function allexp($UserId)

@@ -52,7 +52,7 @@ $allIncome = $getFromE->allIncome($_SESSION['UserId']);
                     </form>
                 </div>
 
-                <div class="income-records">
+                <!-- <div class="income-records">
                     <h3 style="font-family: 'Source Sans Pro';">Your Income Records:</h3>
                     <table>
                         <thead>
@@ -78,7 +78,7 @@ $allIncome = $getFromE->allIncome($_SESSION['UserId']);
                             ?>
                         </tbody>
                     </table>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
