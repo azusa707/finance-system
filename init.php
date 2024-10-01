@@ -13,5 +13,7 @@ $getFromU = new User($pdo);
 $getFromB = new Budget($pdo);
 $getFromE = new Expense($pdo);
 $getFromI = new Income($pdo);
+$getFromB = new Budget($pdo);
+
 
 define("BASE_URL", "http://localhost/finance/");

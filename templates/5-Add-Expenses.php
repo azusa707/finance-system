@@ -28,6 +28,20 @@ if (isset($_POST['addexpense'])) {
     </script>';
 	exit(); // Stop further execution after redirect
 }
+$category = $_POST['category'];
+$itemcost = $_POST['costitem'];
+
+$remainingBudget = $getFromB->getRemainingBudget($_SESSION['UserId'], $category);
+if ($remainingBudget < $itemcost) {
+	echo '<script>
+        Swal.fire({
+            title: "Budget Warning!",
+            text: "This expense exceeds your remaining budget for ' . $category . '.",
+            icon: "warning",
+            confirmButtonText: "OK"
+        });
+    </script>';
+}
 ?>
 
 <div class="wrapper">

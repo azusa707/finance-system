@@ -63,19 +63,6 @@ class Expense extends Base
     return $forecast;
   }
 
-  private function calculateMovingAverage($expenses, $periods)
-  {
-    $movingAverages = [];
-    $total = array_sum(array_slice($expenses, 0, $periods));
-    $movingAverages[] = $total / $periods;
-
-    for ($i = $periods; $i < count($expenses); $i++) {
-      $total = $total - $expenses[$i - $periods] + $expenses[$i];
-      $movingAverages[] = $total / $periods;
-    }
-
-    return $movingAverages;
-  }
 
   public function getLastTwelveMonthsExpenses($userId)
   {
@@ -199,5 +186,182 @@ class Expense extends Base
     $stmt = $this->pdo->prepare("DELETE FROM expense WHERE ID = :id");
     $stmt->bindParam(":id", $ID, PDO::PARAM_INT);
     $stmt->execute();
+  }
+  public function arimaForecast($userId, $periodsToForecast = 3)
+  {
+    // Fetch the last 24 months of expenses (we need more data for ARIMA)
+    $stmt = $this->pdo->prepare("
+          SELECT YEAR(Date) as year, MONTH(Date) as month, SUM(Cost) as total
+          FROM expense 
+          WHERE UserId = :userId 
+          AND Date >= DATE_SUB(CURDATE(), INTERVAL 24 MONTH)
+          GROUP BY YEAR(Date), MONTH(Date)
+          ORDER BY YEAR(Date), MONTH(Date)
+      ");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Extract just the expense values
+    $expenseValues = array_column($expenses, 'total');
+
+    // Implement ARIMA(1,1,1) model
+    $differenced = $this->difference($expenseValues);
+    $phi = $this->estimateAR($differenced);
+    $theta = $this->estimateMA($differenced);
+
+    // Forecast
+    $forecast = [];
+    $lastValue = end($expenseValues);
+    $lastDiff = end($differenced);
+    for ($i = 0; $i < $periodsToForecast; $i++) {
+      $prediction = $lastValue + $phi * $lastDiff + $theta * ($lastDiff - $phi * ($i > 0 ? $differenced[count($differenced) - 2] : 0));
+      $forecast[] = $prediction;
+      $lastValue = $prediction;
+      $lastDiff = $prediction - $lastValue;
+    }
+
+    return $forecast;
+  }
+
+  private function difference($series)
+  {
+    $diff = [];
+    for ($i = 1; $i < count($series); $i++) {
+      $diff[] = $series[$i] - $series[$i - 1];
+    }
+    return $diff;
+  }
+
+  private function estimateAR($series)
+  {
+    // Simple AR(1) coefficient estimation
+    $n = count($series);
+    $mean = array_sum($series) / $n;
+    $numerator = 0;
+    $denominator = 0;
+    for ($i = 1; $i < $n; $i++) {
+      $numerator += ($series[$i] - $mean) * ($series[$i - 1] - $mean);
+      $denominator += pow($series[$i - 1] - $mean, 2);
+    }
+    return $numerator / $denominator;
+  }
+
+  private function estimateMA($series)
+  {
+    // Simple MA(1) coefficient estimation
+    // This is a very basic approximation
+    $n = count($series);
+    $sum = 0;
+    for ($i = 1; $i < $n; $i++) {
+      $sum += $series[$i] * $series[$i - 1];
+    }
+    return $sum / (($n - 1) * array_sum(array_map('pow', $series, array_fill(0, $n, 2))));
+  }
+  public function forecastBudget($userId, $category, $months = 6)
+  {
+    // Fetch historical expense data
+    $stmt = $this->pdo->prepare("
+          SELECT YEAR(Date) as year, MONTH(Date) as month, SUM(Cost) as total
+          FROM expense 
+          WHERE UserId = :userId AND Category = :category
+          AND Date >= DATE_SUB(CURDATE(), INTERVAL 24 MONTH)
+          GROUP BY YEAR(Date), MONTH(Date)
+          ORDER BY YEAR(Date), MONTH(Date)
+      ");
+    $stmt->execute(['userId' => $userId, 'category' => $category]);
+    $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Extract expense values
+    $values = array_column($expenses, 'total');
+
+    // Calculate trend using simple moving average
+    $trendPeriod = 3;
+    $trend = $this->calculateMovingAverage($values, $trendPeriod);
+
+    // Calculate seasonality
+    $seasonality = $this->calculateSeasonality($values);
+
+    // Forecast future values
+    $forecast = $this->forecastValues($values, $trend, $seasonality, $months);
+
+    return $forecast;
+  }
+
+  private function calculateMovingAverage($values, $period)
+  {
+    $result = [];
+    for ($i = 0; $i < count($values) - $period + 1; $i++) {
+      $result[] = array_sum(array_slice($values, $i, $period)) / $period;
+    }
+    return $result;
+  }
+
+  private function calculateSeasonality($values)
+  {
+    $seasons = 12; // Assuming monthly data
+    $seasonalAvg = array_fill(0, $seasons, 0);
+    $seasonalCount = array_fill(0, $seasons, 0);
+
+    for ($i = 0; $i < count($values); $i++) {
+      $season = $i % $seasons;
+      $seasonalAvg[$season] += $values[$i];
+      $seasonalCount[$season]++;
+    }
+
+    for ($i = 0; $i < $seasons; $i++) {
+      if ($seasonalCount[$i] > 0) {
+        $seasonalAvg[$i] /= $seasonalCount[$i];
+      }
+    }
+
+    $totalAvg = array_sum($seasonalAvg) / $seasons;
+    $seasonalIndices = [];
+    for ($i = 0; $i < $seasons; $i++) {
+      $seasonalIndices[$i] = $seasonalAvg[$i] / $totalAvg;
+    }
+
+    return $seasonalIndices;
+  }
+
+  private function forecastValues($values, $trend, $seasonality, $months)
+  {
+    $forecast = [];
+    $seasons = count($seasonality);
+    $lastValue = end($values);
+    $lastTrend = end($trend);
+
+    for ($i = 0; $i < $months; $i++) {
+      $forecastValue = ($lastValue + $lastTrend) * $seasonality[$i % $seasons];
+      $forecast[] = max(0, round($forecastValue, 2)); // Ensure non-negative values
+      $lastValue = $forecastValue;
+    }
+
+    return $forecast;
+  }
+
+  public function suggestBudgetWithForecast($userId, $months = 6)
+  {
+    $categories = $this->getExpenseCategories($userId);
+    $budgetSuggestion = [];
+
+    foreach ($categories as $category) {
+      $forecast = $this->forecastBudget($userId, $category, $months);
+      $averageForecast = array_sum($forecast) / count($forecast);
+      $budgetSuggestion[$category] = ceil($averageForecast); // Round up to nearest integer
+    }
+
+    return $budgetSuggestion;
+  }
+
+  private function getExpenseCategories($userId)
+  {
+    $stmt = $this->pdo->prepare("
+          SELECT DISTINCT Category
+          FROM expense
+          WHERE UserId = :userId
+      ");
+    $stmt->execute(['userId' => $userId]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }
 }
