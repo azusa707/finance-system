@@ -364,4 +364,56 @@ class Expense extends Base
     $stmt->execute(['userId' => $userId]);
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }
+
+  public function holtWintersForecast($userId, $periodsToForecast = 3)
+  {
+    // Last 24 months of expenses
+    $stmt = $this->pdo->prepare("
+        SELECT YEAR(Date) as year, MONTH(Date) as month, SUM(Cost) as total
+        FROM expense
+        WHERE UserId = :userId AND Date >= DATE_SUB(CURDATE(), INTERVAL 24 MONTH)
+        GROUP BY YEAR(Date), MONTH(Date)
+        ORDER BY YEAR(Date), MONTH(Date)
+    ");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $data = array_column($expenses, 'total');
+
+    // Parameters
+    $alpha = 0.3; // Smoothing factor for the level
+    $beta = 0.1;  // Smoothing factor for the trend
+    $gamma = 0.3; // Smoothing factor for the seasonal component
+    $seasonalPeriods = 12; // Assuming monthly data
+
+    // Initialize level, trend, and seasonal components
+    $level = array_sum(array_slice($data, 0, $seasonalPeriods)) / $seasonalPeriods;
+    $trend = (array_sum(array_slice($data, $seasonalPeriods, $seasonalPeriods)) -
+      array_sum(array_slice($data, 0, $seasonalPeriods))) / ($seasonalPeriods * $seasonalPeriods);
+    $seasonal = array_fill(0, $seasonalPeriods, 0);
+    for ($i = 0; $i < $seasonalPeriods; $i++) {
+      $seasonal[$i] = $data[$i] / ((array_sum(array_slice($data, 0, $seasonalPeriods)) / $seasonalPeriods));
+    }
+
+
+    $smoothed = [];
+    for ($i = 0; $i < count($data); $i++) {
+      $value = $data[$i];
+      $lastLevel = $level;
+      $level = $alpha * ($value / $seasonal[$i % $seasonalPeriods]) + (1 - $alpha) * ($level + $trend);
+      $trend = $beta * ($level - $lastLevel) + (1 - $beta) * $trend;
+      $seasonal[$i % $seasonalPeriods] = $gamma * ($value / $level) + (1 - $gamma) * $seasonal[$i % $seasonalPeriods];
+      $smoothed[] = ($level + $trend) * $seasonal[$i % $seasonalPeriods];
+    }
+
+
+    $forecast = [];
+    for ($i = 0; $i < $periodsToForecast; $i++) {
+      $forecastValue = ($level + ($i + 1) * $trend) * $seasonal[($i + count($data)) % $seasonalPeriods];
+      $forecast[] = max(0, $forecastValue);
+    }
+
+    return $forecast;
+  }
 }

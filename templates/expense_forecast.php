@@ -9,7 +9,7 @@ if ($getFromU->loggedIn() === false) {
 include_once 'skeleton.php';
 
 // Get the forecasted expenses
-$forecastedExpenses = $getFromE->arimaForecast($_SESSION['UserId'], 3);
+$forecastedExpenses = $getFromE->holtWintersForecast($_SESSION['UserId'], 3);
 
 // Get the last 12 months of actual expenses for comparison
 $lastTwelveMonths = $getFromE->getLastTwelveMonthsExpenses($_SESSION['UserId']);
