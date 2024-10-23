@@ -3,7 +3,7 @@ include_once "init.php";
 
 // User login check
 if (isset($_SESSION['UserId'])) {
-    header('Location: templates/3-Dashboard.php');
+    header('Location: main/Dashboard.php');
 }
 
 // Validate credentials and log the user in
@@ -81,7 +81,7 @@ if (isset($_POST['login']) && !empty($_POST)) {
 
             <div class="new-account">
                 <span style="color: rgba(0, 0, 0, 0.54); font-weight: bolder; font-family: 'Source Sans Pro';">Don't have an account?</span>
-                <a href="templates/2-sign-up.php" style="text-decoration: none;"><span style="color: rgba(5, 0, 255, 0.81); font-weight: bolder; font-family: 'Source Sans Pro';">Sign Up Now</span></a>
+                <a href="main/sign-up.php" style="text-decoration: none;"><span style="color: rgba(5, 0, 255, 0.81); font-weight: bolder; font-family: 'Source Sans Pro';">Sign Up Now</span></a>
             </div>
 
         </form>

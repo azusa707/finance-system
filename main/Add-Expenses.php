@@ -1,7 +1,7 @@
 <?php
 include_once "../init.php";
 
-//User login checker
+// User login checker
 if ($getFromU->loggedIn() === false) {
 	header('Location: ../index.php');
 }
@@ -13,6 +13,8 @@ if (isset($_POST['addexpense'])) {
 	$dt = date("Y-m-d H:i:s", strtotime($_POST["dateexpense"]));
 	$category = $_POST['category'];
 	$itemcost = $_POST['costitem'];
+
+	// Insert the expense into the database
 	$getFromE->create("expense", array('UserId' => $_SESSION['UserId'], 'Category' => $category, 'Cost' => $itemcost, 'Date' => $dt));
 
 	// After inserting into the database, redirect to the same page
@@ -28,19 +30,24 @@ if (isset($_POST['addexpense'])) {
     </script>';
 	exit(); // Stop further execution after redirect
 }
-$category = $_POST['category'];
-$itemcost = $_POST['costitem'];
 
-$remainingBudget = $getFromB->getRemainingBudget($_SESSION['UserId'], $category);
-if ($remainingBudget < $itemcost) {
-	echo '<script>
-        Swal.fire({
-            title: "Budget Warning!",
-            text: "This expense exceeds your remaining budget for ' . $category . '.",
-            icon: "warning",
-            confirmButtonText: "OK"
-        });
-    </script>';
+// Check if category and costitem are set to prevent undefined array key errors
+if (isset($_POST['category']) && isset($_POST['costitem'])) {
+	$category = $_POST['category'];
+	$itemcost = $_POST['costitem'];
+
+	// Check if the expense exceeds the remaining budget
+	$remainingBudget = $getFromB->getRemainingBudget($_SESSION['UserId'], $category);
+	if ($remainingBudget < $itemcost) {
+		echo '<script>
+			Swal.fire({
+				title: "Budget Warning!",
+				text: "This expense exceeds your remaining budget for ' . $category . '.",
+				icon: "warning",
+				confirmButtonText: "OK"
+			});
+		</script>';
+	}
 }
 ?>
 
@@ -74,7 +81,6 @@ if ($remainingBudget < $itemcost) {
 						</div>
 					</form>
 				</div>
-
 			</div>
 		</div>
 	</div>

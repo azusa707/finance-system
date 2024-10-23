@@ -49,11 +49,28 @@ class Income extends Base
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);  // Make sure it returns a single result
     }
+
     public function getTotalIncome($userId)
     {
         $stmt = $this->pdo->prepare("SELECT SUM(amount) AS total FROM income WHERE Userid = :UserId");
         $stmt->execute(['UserId' => $userId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'] ?: 0;  // Return 0 if no income
+    }
+    public function getLastSixMonthsIncome($userId)
+    {
+        $stmt = $this->pdo->prepare("
+        SELECT MONTH(Date) as month, 
+               YEAR(Date) as year, 
+               COALESCE(SUM(Amount), 0) as total
+        FROM income 
+        WHERE UserId = :userId 
+        AND Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 MONTH)
+        GROUP BY YEAR(Date), MONTH(Date)
+        ORDER BY YEAR(Date), MONTH(Date) DESC
+    ");
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
